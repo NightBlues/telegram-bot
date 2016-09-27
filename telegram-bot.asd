@@ -3,5 +3,6 @@
   :version "0.1"
   :depends-on (:drakma :cl-json)
   :components ((:module "src"
-                :components ((:file "bot"))))
+                        :components ((:file "json-routines")
+                                     (:file "bot"))))
   :description "Telegram bot api")

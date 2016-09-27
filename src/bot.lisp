@@ -1,6 +1,6 @@
 (in-package :cl-user)
 (defpackage :telegram-bot
-  (:use :cl :drakma :cl-json)
+  (:use :cl :drakma :telegram-bot-json)
   (:export :rpc-call :get-me :get-updates :handle-message :send-message :bot))
 (in-package :telegram-bot)
 
@@ -8,49 +8,40 @@
 ;; (defvar bot (make-instance 'telegram-bot:bot :token "177892372:AAHwGRGhUazjzA0Um5sIUSiXVhKKT0eu9zs"))
 (defparameter *basic-url* "https://api.telegram.org/bot~a/~a")
 
+(defun get-result (resp)
+  (when (get-value resp :|ok|)
+    (get-value resp :|result|)))
+
+(defun get-text (resp)
+  (get-value resp :|message| :|text|))
+
+(defun get-username (resp)
+  (get-value resp :|message| :|from| :|username|))
+
+(defun get-chat-id (resp)
+  (get-value resp :|message| :|from| :|id|))
+
+(defun get-last-update-id (messages)
+  (1+ (get-value (car (last messages))  :|update_id|)))
+
+
 (defclass bot ()
   ((token :reader token
           :initarg :token
           :type string)
    (update-id :accessor update-id
               :type integer
-              :initform 0))
+              :initform 0)
+   (users :accessor users :initform '()))
   (:documentation "Telegram bot main class"))
-
-;; (defun from-json (data)
-;;   (jonathan:parse data :as :hash-table))
-
-;; (defun to-json (obj)
-;;   (jonathan:to-json obj))
-
-;; (defun get-result (resp)
-;;   (when (gethash "ok" resp)
-;;     (gethash "result" resp)))
-
-;; (defun get-last-update-id (messages)
-;;   (1+ (gethash "update_id" (car (last messages)))))
-
-(defun from-json (data)
-  (let ((*json-identifier-name-to-lisp*  #'identity))
-    (json:decode-json-from-string data)))
-
-(defun to-json (obj)
-  (let ((*lisp-identifier-name-to-json* #'identity))
-    (json:encode-json-to-string obj)))
-
-(defun get-result (resp)
-  (when (assoc :|ok| resp :test #'equal)
-    (cdr (assoc :|result| resp :test #'equal))))
-
-(defun get-last-update-id (messages)
-  (1+ (cdr (assoc :|update_id| (car (last messages)) :test #'equal))))
-
 
 (defgeneric rpc-call (self method &optional data))
 (defgeneric get-me (self))
 (defgeneric get-updates (self))
 (defgeneric handle-message (self message))
 (defgeneric send-message (self recepient message))
+(defgeneric add-user (self username chat-id))
+(defgeneric show-users (self))
 
 (defmethod rpc-call ((self bot) method &optional data)
   (let* ((url (format nil *basic-url* (token self) method))
@@ -72,7 +63,7 @@
          (resp (rpc-call self "getUpdates" (list (cons "offset" offset))))
          (result (get-result resp)))
     (when result
-      ;; (setf (update-id self) (get-last-update-id result))
+      (setf (update-id self) (get-last-update-id result))
       (mapc (lambda (message) (funcall #'handle-message self message)) result)
       nil)))
 
@@ -81,8 +72,17 @@
   (let ((data (list (cons "chat_id" recepient) (cons "text" message))))
     (rpc-call self "sendMessage" data)))
 
-  
+
 (defmethod handle-message ((self bot) message)
-  (let ((msg (to-json message)))
-    (format t "Raw:  ~a~%" message)
-    (format t "Message: ~a~%" msg)))
+  (format t "Message:  ~a~%" message)
+  (let (
+        ;; (msg (to-json message))
+        (text (get-text message)))
+    ;; (format t "Message: ~a~%" msg)
+    (cond
+      ((equal text "hello") (add-user self (get-username message) (get-chat-id message)))
+      (t (format t "Dont know how to react to message")))))
+
+
+(defmethod add-user ((self bot) username chat-id)
+  (setf (users bot) (add-value (users bot) username (write-to-string chat-id))))
