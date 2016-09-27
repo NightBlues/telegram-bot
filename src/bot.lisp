@@ -29,7 +29,7 @@
 (defgeneric handle-message (self message))
 (defgeneric send-message (self recepient message))
 (defgeneric add-user (self username chat-id))
-(defgeneric show-users (self))
+(defgeneric get-user (self username))
 
 (defmethod rpc-call ((self bot) method &optional data)
   (let* ((url (format nil *basic-url* (token self) method))
@@ -57,7 +57,9 @@
 
 
 (defmethod send-message ((self bot) recepient message)
-  (let ((data (list (cons "chat_id" (write-to-string recepient)) (cons "text" message))))
+  (format t "Called send-message")
+  (let* ((recepient (if (integerp recepient) (write-to-string recepient) recepient))
+         (data (list (cons "chat_id" recepient) (cons "text" message))))
     (rpc-call self "sendMessage" data)))
 
 
@@ -76,3 +78,7 @@
 
 (defmethod add-user ((self bot) username chat-id)
   (setf (users self) (add-value (users self) username (write-to-string chat-id))))
+
+
+(defmethod get-user ((self bot) username)
+  (get-value (users self) username))
