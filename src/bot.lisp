@@ -75,8 +75,8 @@
     ;; (format t "Message: ~a~%" msg)
     (cond
       ((equal text "hello") (add-user self (get-username message) (get-chat-id message)))
-      (t (format t "Dont know how to react to message")))))
+      (t (format t "Dont know how to react to message~%")))))
 
 
 (defmethod add-user ((self bot) username chat-id)
-  (setf (users bot) (add-value (users bot) username (write-to-string chat-id))))
+  (setf (users self) (add-value (users self) username (write-to-string chat-id))))
