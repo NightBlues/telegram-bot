@@ -9,12 +9,6 @@
 (defun get-text (resp)
   (get-value resp :|message| :|text|))
 
-(defun get-username (resp)
-  (get-value resp :|message| :|from| :|username|))
-
-(defun get-chat-id (resp)
-  (get-value resp :|message| :|from| :|id|))
-
 (defun get-last-update-id (messages)
   (1+ (get-value (car (last messages))  :|update_id|)))
 
@@ -63,7 +57,7 @@
 
 
 (defmethod send-message ((self bot) recepient message)
-  (let ((data (list (cons "chat_id" recepient) (cons "text" message))))
+  (let ((data (list (cons "chat_id" (write-to-string recepient)) (cons "text" message))))
     (rpc-call self "sendMessage" data)))
 
 
@@ -74,7 +68,9 @@
         (text (get-text message)))
     ;; (format t "Message: ~a~%" msg)
     (cond
-      ((equal text "hello") (add-user self (get-username message) (get-chat-id message)))
+      ((equal text "help") (help self message))
+      ((equal text "hello") (hello self message))
+      ((equal text "say my name") (say-my-name self message))
       (t (format t "Dont know how to react to message~%")))))
 
 

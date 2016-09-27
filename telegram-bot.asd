@@ -5,7 +5,8 @@
   :components ((:module "src"
                         :components (
                                      (:file "package")
+                                     (:file "commands" :depends-on ("package" "json-routines"))
                                      (:file "json-routines" :depends-on ("package"))
-                                     (:file "bot" :depends-on ("package" "json-routines"))
+                                     (:file "bot" :depends-on ("package" "json-routines" "commands"))
                                      (:file "main" :depends-on ("package" "bot")))))
   :description "Telegram bot api")
