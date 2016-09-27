@@ -10,4 +10,4 @@
 
 (defpackage :telegram-bot
   (:use :cl :drakma :telegram-bot-json :telegram-bot-commands)
-  (:export :rpc-call :get-me :get-updates :handle-message :send-message :bot))
+  (:export :main :rpc-call :get-me :get-updates :handle-message :send-message :bot))

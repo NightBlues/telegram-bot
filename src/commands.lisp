@@ -8,7 +8,7 @@
 
 
 (defun send-response (self income-msg text)
-  (telegram-bot::send-message self (get-chat-id income-msg) text))
+  (telegram-bot:send-message self (get-chat-id income-msg) text))
 
 
 (defun help (self message)
@@ -19,7 +19,7 @@ say my name - ensure that bot know you
 "))
 
 (defun hello (self message)
-  (telegram-bot::add-user self (get-username message) (get-chat-id message)))
+  (telegram-bot:add-user self (get-username message) (get-chat-id message)))
 
 (defun say-my-name (self message)
   (let* ((username (get-username message))
