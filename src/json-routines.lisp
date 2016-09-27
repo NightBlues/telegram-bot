@@ -1,9 +1,4 @@
-(defpackage :telegram-bot-json
-  (:use :cl :cl-json)
-  (:export :get-value :add-value :unset-value :set-value :from-json :to-json))
 (in-package :telegram-bot-json)
-  
-
 
 ;; (defun from-json (data)
 ;;   (jonathan:parse data :as :hash-table))

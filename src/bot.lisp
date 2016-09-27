@@ -1,11 +1,5 @@
-(in-package :cl-user)
-(defpackage :telegram-bot
-  (:use :cl :drakma :telegram-bot-json)
-  (:export :rpc-call :get-me :get-updates :handle-message :send-message :bot))
 (in-package :telegram-bot)
 
-;; (defparameter *access-token* "177892372:AAHwGRGhUazjzA0Um5sIUSiXVhKKT0eu9zs")
-;; (defvar bot (make-instance 'telegram-bot:bot :token "177892372:AAHwGRGhUazjzA0Um5sIUSiXVhKKT0eu9zs"))
 (defparameter *basic-url* "https://api.telegram.org/bot~a/~a")
 
 (defun get-result (resp)
