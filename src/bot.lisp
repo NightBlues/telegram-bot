@@ -70,10 +70,10 @@
         (text (get-text message)))
     ;; (format t "Message: ~a~%" msg)
     (cond
-      ((equal text "help") (help self message))
-      ((equal text "hello") (hello self message))
-      ((equal text "say my name") (say-my-name self message))
-      ((equal text "bye") (bye self message))
+      ((equal text "/help") (help self message))
+      ((equal text "/hello") (hello self message))
+      ((equal text "/saymyname") (say-my-name self message))
+      ((equal text "/bye") (bye self message))
       (t (format t "Dont know how to react to message~%")))))
 
 

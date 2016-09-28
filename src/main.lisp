@@ -3,7 +3,8 @@
 (defvar bot-s '() "Bot singleton.")
 
 (defun main (token port &key (interval 5))
-  (setq bot-s (make-instance 'telegram-bot:bot :token token))
+  (unless bot-s
+	(setq bot-s (make-instance 'telegram-bot:bot :token token)))
 
   (as:with-event-loop ()
 	(let* ((updater (as:with-interval (interval)

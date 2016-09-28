@@ -1,7 +1,11 @@
 (in-package :telegram-bot-commands)
 
 (defun get-username (resp)
-  (get-value resp :|message| :|from| :|username|))
+  (let ((username (get-value resp :|message| :|from| :|username|))
+        (id (get-value resp :|message| :|from| :|id|)))
+    (when (integerp id)
+      (setq id (write-to-string id)))
+    (or username id)))
 
 (defun get-chat-id (resp)
   (get-value resp :|message| :|from| :|id|))
@@ -13,10 +17,10 @@
 
 (defun help (self message)
   (send-response self message "
-help - show this help
-hello - make bot remember you
-say my name - ensure that bot know you
-bye - remove you from bot memory
+/help - show this help
+/hello - make bot remember you
+/saymyname - ensure that bot know you
+/bye - remove you from bot memory
 "))
 
 (defun hello (self message)
