@@ -58,7 +58,6 @@
 
 
 (defmethod send-message ((self bot) recepient message)
-  (format t "Called send-message")
   (let* ((recepient (if (integerp recepient) (write-to-string recepient) recepient))
          (data (list (cons "chat_id" recepient) (cons "text" message))))
     (rpc-call self "sendMessage" data)))
