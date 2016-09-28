@@ -6,11 +6,11 @@
 
 (defpackage :telegram-bot-commands
   (:use :cl :cl-async :telegram-bot-json)
-  (:export :hello :say-my-name :help))
+  (:export :hello :say-my-name :help :bye))
 
 (defpackage :telegram-bot-server
   (:use :cl :cl-async :wookie :telegram-bot-json))
 
 (defpackage :telegram-bot
   (:use :cl :drakma :cl-async :wookie :telegram-bot-json :telegram-bot-commands)
-  (:export :main :rpc-call :get-me :get-updates :handle-message :send-message :add-user :get-user :bot :bot-s))
+  (:export :main :rpc-call :get-me :get-updates :handle-message :send-message :add-user :get-user :del-user :bot :bot-s))

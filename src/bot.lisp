@@ -30,6 +30,7 @@
 (defgeneric send-message (self recepient message))
 (defgeneric add-user (self username chat-id))
 (defgeneric get-user (self username))
+(defgeneric del-user (self username))
 
 (defmethod rpc-call ((self bot) method &optional data)
   (let* ((url (format nil *basic-url* (token self) method))
@@ -73,6 +74,7 @@
       ((equal text "help") (help self message))
       ((equal text "hello") (hello self message))
       ((equal text "say my name") (say-my-name self message))
+      ((equal text "bye") (bye self message))
       (t (format t "Dont know how to react to message~%")))))
 
 
@@ -82,3 +84,7 @@
 
 (defmethod get-user ((self bot) username)
   (get-value (users self) username))
+
+
+(defmethod del-user ((self bot) username)
+  (setf (users self) (unset-value (users self) username)))
