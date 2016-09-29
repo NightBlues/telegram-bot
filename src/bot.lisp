@@ -42,9 +42,13 @@
           (if data
               (list url :method :post :return-body t :body (to-json data)
                     :headers '(:content-type "application/json"))
-              (list url :method :get :return-body t))))
+              (list url :method :get :return-body t)))
+         (request-promise (apply #'carrier:request call-args)))
+    (blackbird:attach-errback
+     request-promise
+     (lambda (err) (format t "Error in rpc-call ~a: ~a~%" method err)))
     (blackbird:attach
-     (apply #'carrier:request call-args)
+     request-promise
      (lambda (body code headers)
        (declare (ignore code headers))
        (from-json (babel:octets-to-string body))))))
