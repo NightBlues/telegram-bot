@@ -3,7 +3,7 @@
 (defroute (:get "/.*") (req res)
   (send-response res :body "There is no spoon!~%"))
 
-(defroute (:post "/([a-zA-Z]+)") (req res args)
+(defroute (:post "/([a-zA-Z0-9_-]+)") (req res args)
   (let* ((username (car args))
 		 (post-data (flexi-streams:octets-to-string (request-body req)))
 		 (chat-id (telegram-bot:get-user telegram-bot:bot-s username))
