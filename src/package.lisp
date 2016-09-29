@@ -9,8 +9,9 @@
   (:export :hello :say-my-name :help :bye))
 
 (defpackage :telegram-bot-server
-  (:use :cl :cl-async :wookie :telegram-bot-json))
+  (:use :cl :cl-async :wookie :telegram-bot-json)
+  (:export :main))
 
 (defpackage :telegram-bot
-  (:use :cl :drakma :cl-async :wookie :telegram-bot-json :telegram-bot-commands)
-  (:export :main :rpc-call :get-me :get-updates :handle-message :send-message :add-user :get-user :del-user :bot :bot-s))
+  (:use :cl :babel :blackbird :carrier :cl-async :telegram-bot-json :telegram-bot-commands)
+  (:export :rpc-call :get-me :get-updates :handle-message :send-message :add-user :get-user :del-user :bot :bot-s))

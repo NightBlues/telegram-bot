@@ -13,6 +13,9 @@
   (1+ (get-value (car (last messages))  :|update_id|)))
 
 
+(defvar bot-s '() "Bot singleton.")
+
+
 (defclass bot ()
   ((token :reader token
           :initarg :token
@@ -32,29 +35,36 @@
 (defgeneric get-user (self username))
 (defgeneric del-user (self username))
 
+
 (defmethod rpc-call ((self bot) method &optional data)
   (let* ((url (format nil *basic-url* (token self) method))
-         ;; (call-args (list url :want-stream t))
-         (call-args (list url :external-format-in :utf-8))
-         (result nil))
-    (when data
-      (setq call-args (nconc call-args `(:method :post :external-format-out :utf-8 :parameters ,data))))
-    (setq result (apply #'drakma:http-request call-args))
-    (setq result (flexi-streams:octets-to-string result))
-    (from-json result)))
+         (call-args
+          (if data
+              (list url :method :post :return-body t :body (to-json data)
+                    :headers '(:content-type "application/json"))
+              (list url :method :get :return-body t))))
+    (blackbird:attach
+     (apply #'carrier:request call-args)
+     (lambda (body code headers)
+       (declare (ignore code headers))
+       (from-json (babel:octets-to-string body))))))
+
 
 (defmethod get-me ((self bot))
-  (let ((resp (rpc-call self "getMe")))
-    (get-result resp)))
+  (blackbird:attach
+   (rpc-call self "getMe")
+   (lambda (resp)
+     (get-result resp))))
+
 
 (defmethod get-updates ((self bot))
-  (let* ((offset (format nil "~a" (update-id self)))
-         (resp (rpc-call self "getUpdates" (list (cons "offset" offset))))
-         (result (get-result resp)))
-    (when result
-      (setf (update-id self) (get-last-update-id result))
-      (mapc (lambda (message) (funcall #'handle-message self message)) result)
-      nil)))
+  (blackbird:attach
+   (rpc-call self "getUpdates" (list (cons "offset" (write-to-string (update-id self)))))
+   (lambda (resp)
+     (let ((result (get-result resp)))
+       (when result
+         (setf (update-id self) (get-last-update-id result))
+         (mapc (lambda (message) (funcall #'handle-message self message)) result))))))
 
 
 (defmethod send-message ((self bot) recepient message)

@@ -7,4 +7,4 @@
 (when (sb-ext:posix-getenv "PORT")
   (setq port (parse-integer (sb-ext:posix-getenv "PORT"))))
 
-(telegram-bot:main token port)
+(telegram-bot-server:main token port)
